@@ -1,0 +1,88 @@
+<%- include('../partials/header') %>
+
+<div class="row mt-4">
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            <% if (teacher.image) { %>
+                <img src="/uploads/<%= teacher.image %>" class="card-img-top" alt="<%= teacher.name %>">
+            <% } else { %>
+                <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 300px;">
+                    <span>Bez fotky</span>
+                </div>
+            <% } %>
+            <div class="card-body">
+                <h2 class="card-title"><%= teacher.name %></h2>
+                <p class="text-muted"><%= teacher.subjects.join(', ') %></p>
+                <div class="mb-3">
+                    <strong>Průměrné hodnocení:</strong> 
+                    <span class="badge bg-success fs-5"><%= averageRating > 0 ? averageRating : 'Zatím nehodnoceno' %> / 5</span>
+                </div>
+                
+                <% if (user && user.role === 'admin') { %>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <a href="/admin/edit-teacher/<%= teacher._id %>" class="btn btn-outline-warning">Upravit učitele</a>
+                        <form action="/admin/delete-teacher/<%= teacher._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Opravdu chcete tohoto učitele smazat?');">
+                            <button type="submit" class="btn btn-outline-danger w-100">Smazat učitele</button>
+                        </form>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Přidat hodnocení</h4>
+                <% if (user) { %>
+                    <form action="/teachers/<%= teacher._id %>/reviews" method="POST">
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Počet hvězdiček (1 - nejhorší, 5 - nejlepší)</label>
+                            <select class="form-select" id="rating" name="rating" required>
+                                <option value="5">5 - Výborný</option>
+                                <option value="4">4 - Chvalitebný</option>
+                                <option value="3">3 - Dobrý</option>
+                                <option value="2">2 - Dostatečný</option>
+                                <option value="1">1 - Nedostatečný</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="comment" class="form-label">Slovní hodnocení (nepovinné)</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="Napište, jaký byl učitel..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Odeslat hodnocení</button>
+                    </form>
+                <% } else { %>
+                    <div class="alert alert-warning">
+                        Pro přidání hodnocení se musíte <a href="/login" class="alert-link">přihlásit</a>.
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <h4 class="mb-3">Recenze studentů</h4>
+        <% if (reviews.length > 0) { %>
+            <div class="list-group shadow-sm">
+                <% reviews.forEach(review => { %>
+                    <div class="list-group-item flex-column align-items-start p-3">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 fw-bold"><%= review.user.username %></h6>
+                            <small class="text-muted"><%= review.createdAt.toLocaleDateString('cs-CZ') %></small>
+                        </div>
+                        <p class="mb-1 mt-2">
+                            Hodnocení: <span class="badge bg-primary"><%= review.rating %> / 5</span>
+                        </p>
+                        <% if (review.comment) { %>
+                            <p class="mt-2 mb-0 text-dark"><%= review.comment %></p>
+                        <% } %>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <p class="text-muted">Tento učitel zatím nemá žádné recenze.</p>
+        <% } %>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

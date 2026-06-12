@@ -1,0 +1,28 @@
+<%- include('../partials/header') %>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="card-title text-center mb-4">Přidat nového učitele</h3>
+                <form action="/admin/add-teacher" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Jméno a příjmení</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subjects" class="form-label">Vyučované předměty (oddělené čárkou)</label>
+                        <input type="text" class="form-control" id="subjects" name="subjects" placeholder="např. Matematika, Fyzika" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="image" class="form-label">Fotografie učitele (nepovinné)</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Uložit učitele</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,31 @@
+<%- include('../partials/header') %>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="card-title text-center mb-4">Upravit učitele</h3>
+                <form action="/admin/edit-teacher/<%= teacher._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Jméno a příjmení</label>
+                        <input type="text" class="form-control" id="name" name="name" value="<%= teacher.name %>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subjects" class="form-label">Vyučované předměty</label>
+                        <input type="text" class="form-control" id="subjects" name="subjects" value="<%= teacher.subjects.join(', ') %>" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="image" class="form-label">Nová fotografie (nechte prázdné pro zachování původní)</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="/teachers/<%= teacher._id %>" class="btn btn-secondary">Zpět</a>
+                        <button type="submit" class="btn btn-warning">Uložit změny</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
