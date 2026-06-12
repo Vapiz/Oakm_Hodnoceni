@@ -7,7 +7,7 @@
     <div class="col-md-6">
         <form action="/" method="GET" class="d-flex">
             <input type="text" name="search" class="form-control me-2" placeholder="Hledat učitele nebo předmět...">
-            <button type="submit" class="btn btn-outline-primary">Hledat</button>
+            <button type="submit" class="btn btn-outline-oakm">Hledat</button>
         </form>
     </div>
 </div>
@@ -29,14 +29,16 @@
                         <p class="card-text text-muted">
                             <%= teacher.subjects.join(', ') %>
                         </p>
-                        <a href="/teachers/<%= teacher._id %>" class="btn btn-primary w-100">Zobrazit profil a recenze</a>
+                        <a href="/teachers/<%= teacher._id %>" class="btn btn-oakm w-100">Zobrazit profil a recenze</a>
                     </div>
                 </div>
             </div>
         <% }) %>
     <% } else { %>
         <div class="col-12">
-            <div class="alert alert-info">Zatím nebyli přidáni žádní učitelé.</div>
+            <div class="alert shadow-sm" style="background-color: #1a1a1a; border: 1px solid #333; border-left: 4px solid #e60023; color: #ffffff;">
+                Zatím nebyli přidáni žádní učitelé, nebo hledaný výraz neodpovídá žádnému výsledku.
+            </div>
         </div>
     <% } %>
 </div>

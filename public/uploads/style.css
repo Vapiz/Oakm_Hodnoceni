@@ -1,0 +1,65 @@
+/* --- Navigační lišta --- */
+.custom-navbar {
+    background-color: #e60023 !important; /* OAKM Červená pro celou lištu */
+    border-bottom: none;
+    box-shadow: 0 4px 15px rgba(230, 0, 35, 0.4);
+}
+
+/* Úprava textů v červené liště na bílou */
+.custom-navbar .navbar-brand span,
+.custom-navbar .nav-link,
+.custom-navbar .opacity-75 {
+    color: #ffffff !important;
+}
+
+/* Tlačítka s obrysem v navigační liště (aby byla bílá a zčervenala při najetí) */
+.custom-navbar .btn-outline-danger {
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+    background-color: transparent !important;
+}
+
+.custom-navbar .btn-outline-danger:hover {
+    background-color: #ffffff !important;
+    color: #e60023 !important;
+}
+
+
+/* --- Tlačítka kdekoli jinde na webu --- */
+.btn {
+    border-radius: 30px !important;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+/* Všechna plná tlačítka budou červená */
+.btn-primary, .btn-success, .btn-danger, .btn-warning, .btn-secondary {
+    background-color: #e60023 !important;
+    border-color: #e60023 !important;
+    color: #ffffff !important;
+}
+
+/* Efekt při najetí myší */
+.btn-primary:hover, .btn-success:hover, .btn-danger:hover, .btn-warning:hover, .btn-secondary:hover {
+    background-color: #ff1a3c !important;
+    border-color: #ff1a3c !important;
+    transform: scale(1.02);
+}
+
+/* Tlačítka s obrysem mimo navigaci (např. u učitelů) */
+.btn-outline-primary, .btn-outline-warning {
+    color: #e60023 !important;
+    border-color: #e60023 !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover, .btn-outline-warning:hover {
+    background-color: #e60023 !important;
+    color: #ffffff !important;
+}
+
+/* Odznaky s hodnocením */
+.badge.bg-primary, .badge.bg-success {
+    background-color: #e60023 !important;
+    color: white !important;
+}

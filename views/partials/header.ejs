@@ -1,40 +1,81 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="cs" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OAKM Hodnocení</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="bg-light">
+    
+    <style>
+        /* Naše vlastní OAKM třídy - naprostá jistota barvy #e60023 */
+        .btn-oakm, .badge-oakm {
+            background-color: #e60023 !important;
+            border-color: #e60023 !important;
+            color: #ffffff !important;
+            opacity: 1 !important;
+        }
+        .btn-oakm:hover {
+            background-color: #cc001f !important;
+            border-color: #cc001f !important;
+            color: #ffffff !important;
+        }
+        .btn-outline-oakm {
+            color: #e60023 !important;
+            border-color: #e60023 !important;
+            background-color: transparent !important;
+            opacity: 1 !important;
+        }
+        .btn-outline-oakm:hover {
+            background-color: #e60023 !important;
+            color: #ffffff !important;
+        }
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        /* Speciální hover pro bílá tlačítka v červené liště */
+        .btn-header-white {
+            color: #ffffff !important;
+            border-color: #ffffff !important;
+            background-color: transparent !important;
+            transition: all 0.3s ease;
+        }
+        .btn-header-white:hover {
+            background-color: #ffffff !important;
+            color: #e60023 !important;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg mb-5 shadow-sm" style="background-color: #e60023; border: none;">
     <div class="container">
-        <a class="navbar-brand" href="/">OAKM Hodnocení</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <img src="/logo.png" alt="OAKM Logo" width="45" height="45" class="me-3 rounded-circle bg-white p-1">
+            <span class="fw-bold text-white tracking-wide">OAKM Hodnocení</span>
+        </a>
+        <button class="navbar-toggler border-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-center">
                 <% if (user) { %>
-                    <li class="nav-item">
-                        <span class="nav-link text-info">Ahoj, <%= user.username %>!</span>
+                    <li class="nav-item me-3">
+                        <span class="nav-link text-white opacity-75">Ahoj, <%= user.username %></span>
                     </li>
                     <% if (user.role === 'admin') { %>
-                        <li class="nav-item">
-                            <a class="nav-link text-warning" href="/admin/add-teacher">+ Přidat učitele</a>
+                        <li class="nav-item me-2">
+                            <a class="nav-link btn btn-header-white btn-sm px-3 rounded-pill fw-bold" href="/admin/add-teacher">+ Přidat učitele</a>
                         </li>
                     <% } %>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout">Odhlásit se</a>
+                        <a class="nav-link btn btn-header-white fw-bold btn-sm px-4 rounded-pill" href="/logout">Odhlásit se</a>
                     </li>
                 <% } else { %>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Přihlášení</a>
+                    <li class="nav-item me-2">
+                        <a class="nav-link btn btn-header-white fw-bold btn-sm px-4 rounded-pill" href="/login">Přihlášení</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/register">Registrace</a>
+                        <a class="nav-link btn btn-header-white fw-bold btn-sm px-4 rounded-pill" href="/register">Registrace</a>
                     </li>
                 <% } %>
             </ul>
