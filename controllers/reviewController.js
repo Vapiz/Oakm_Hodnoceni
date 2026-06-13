@@ -1,24 +1,42 @@
 const Review = require('../models/Review');
 
-const handleAddReview = async (req, res) => {
+const addReview = async (req, res) => {
     try {
-        const { rating, comment } = req.body;
-        const teacherId = req.params.id;
-        const userId = req.session.user.id;
+        if (!req.session.user) {
+            return res.status(401).send('Pro přidání recenze musíte být přihlášeni.');
+        }
 
-        const review = new Review({
+        const teacherId = req.params.id;
+        const { rating, comment } = req.body;
+        
+        const newReview = new Review({
             teacher: teacherId,
-            user: userId,
-            rating: Number(rating),
+            user: req.session.user.id,
+            rating: parseInt(rating),
             comment: comment
         });
 
-        await review.save();
+        await newReview.save();
         res.redirect(`/teachers/${teacherId}`);
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Chyba při přidávání recenze');
+        res.status(500).send('Chyba při přidávání hodnocení.');
     }
 };
 
-module.exports = { handleAddReview };
+const deleteReview = async (req, res) => {
+    try {
+        const reviewId = req.params.id;
+        const teacherId = req.body.teacherId; 
+
+        await Review.findByIdAndDelete(reviewId);
+
+        res.redirect(`/teachers/${teacherId}`);
+    } catch (error) {
+        res.status(500).send('Nastala chyba při mazání recenze.');
+    }
+};
+
+module.exports = {
+    addReview,
+    deleteReview
+};
