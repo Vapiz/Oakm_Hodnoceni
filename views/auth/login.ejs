@@ -2,19 +2,26 @@
 
 <div class="row justify-content-center mt-5">
     <div class="col-md-5">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h3 class="card-title text-center mb-4">Přihlášení</h3>
+        <div class="card p-4 border-0 shadow-lg" style="background: rgba(25, 25, 25, 0.5); backdrop-filter: blur(10px); border-radius: 20px;">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4 fw-bold text-white">Přihlášení</h3>
+                
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="alert shadow-sm rounded-3 mb-4" style="background-color: rgba(230,0,35,0.1); border: 1px solid rgba(230,0,35,0.3); color: #ff1a3c; text-align: center;">
+                        <span class="fw-bold"><%= error %></span>
+                    </div>
+                <% } %>
+
                 <form action="/login" method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Uživatelské jméno</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
                     <div class="mb-4">
-                        <label for="password" class="form-label">Heslo</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <label for="username" class="form-label text-white-50">Uživatelské jméno</label>
+                        <input type="text" class="form-control shadow-none" id="username" name="username" style="background-color: rgba(25,25,25,0.7); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px; padding: 12px;" required>
                     </div>
-                    <button type="submit" class="btn btn-oakm w-100">Přihlásit se</button>
+                    <div class="mb-5">
+                        <label for="password" class="form-label text-white-50">Heslo</label>
+                        <input type="password" class="form-control shadow-none" id="password" name="password" style="background-color: rgba(25,25,25,0.7); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px; padding: 12px;" required>
+                    </div>
+                    <button type="submit" class="btn btn-oakm w-100 rounded-pill py-2 fw-bold" style="font-size: 1.1rem;">Přihlásit se</button>
                 </form>
             </div>
         </div>

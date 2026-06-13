@@ -8,13 +8,22 @@ const renderRegister = (req, res) => {
 const handleRegister = async (req, res) => {
     try {
         const { username, password } = req.body;
+        
+        // Zásadní novinka: Proaktivně zkontrolujeme, jestli jméno už neexistuje (ignorujeme velikost písmen)
+        const existingUser = await User.findOne({ username: new RegExp('^' + username + '$', 'i') });
+        if (existingUser) {
+            // Místo padnutí a bílé obrazovky pošleme chybovou hlášku zpět do registrace
+            return res.render('auth/register', { error: 'Tohle uživatelské jméno už bohužel někdo používá.' });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ username, password: hashedPassword });
         await user.save();
         res.redirect('/login');
     } catch (error) {
         console.error(error);
-        res.status(500).send('Chyba při registraci (možná jméno už existuje)');
+        // I nečekané chyby vracíme v hezkém kabátu
+        res.render('auth/register', { error: 'Nastala neočekávaná chyba při registraci. Zkuste to znovu.' });
     }
 };
 
@@ -25,7 +34,9 @@ const renderLogin = (req, res) => {
 const handleLogin = async (req, res) => {
     try {
         const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        
+        // Magie pro ignorování velikosti písmen u jména
+        const user = await User.findOne({ username: new RegExp('^' + username + '$', 'i') });
         
         if (user && await bcrypt.compare(password, user.password)) {
             req.session.user = { 
@@ -35,11 +46,12 @@ const handleLogin = async (req, res) => {
             };
             res.redirect('/');
         } else {
-            res.status(401).send('Špatné jméno nebo heslo');
+            // Tady se teď místo textu na bílé stránce pošle do skleněné karty chybová proměnná
+            res.render('auth/login', { error: 'Zadali jste špatné uživatelské jméno nebo heslo.' });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).send('Chyba při přihlašování');
+        res.render('auth/login', { error: 'Nastala chyba při přihlašování. Zkuste to prosím znovu.' });
     }
 };
 

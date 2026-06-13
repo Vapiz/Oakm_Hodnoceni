@@ -8,7 +8,27 @@ const getTeachers = async (req, res) => {
             const searchRegex = new RegExp(req.query.search, 'i');
             query = { $or: [{ name: searchRegex }, { subjects: searchRegex }] };
         }
-        const teachers = await Teacher.find(query);
+        
+        // Používáme .lean(), abychom do objektů mohli volně přidávat vlastní proměnné (jako displayRating)
+        let teachers = await Teacher.find(query).lean();
+
+        // Projdeme všechny učitele, spočítáme průměr a připravíme text pro zobrazení
+        for (let teacher of teachers) {
+            const reviews = await Review.find({ teacher: teacher._id });
+            
+            if (reviews.length > 0) {
+                const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+                teacher.averageRating = parseFloat((sum / reviews.length).toFixed(1));
+                teacher.displayRating = `${teacher.averageRating} / 5`;
+            } else {
+                teacher.averageRating = 0; // Skryté číslo 0 pro logiku řazení dolů
+                teacher.displayRating = 'Zatím nehodnoceno'; // Text, co uvidí uživatel
+            }
+        }
+
+        // Seřadíme pole učitelů podle averageRating od největšího (5) po nejmenší (0)
+        teachers.sort((a, b) => b.averageRating - a.averageRating);
+
         res.render('teachers/index', { teachers, user: req.session.user });
     } catch (error) {
         console.error(error);

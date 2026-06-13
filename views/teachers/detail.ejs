@@ -2,87 +2,129 @@
 
 <div class="row mt-4">
     <div class="col-md-4 mb-4">
-        <div class="card shadow-sm">
-            <% if (teacher.image) { %>
-                <img src="/uploads/<%= teacher.image %>" class="card-img-top" alt="<%= teacher.name %>">
-            <% } else { %>
-                <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 300px;">
-                    <span>Bez fotky</span>
-                </div>
-            <% } %>
-            <div class="card-body">
-                <h2 class="card-title"><%= teacher.name %></h2>
-                <p class="text-muted"><%= teacher.subjects.join(', ') %></p>
-                <div class="mb-3">
-                    <strong>Průměrné hodnocení:</strong> 
-                    <span class="badge badge-oakm fs-5"><%= averageRating > 0 ? averageRating : 'Zatím nehodnoceno' %> / 5</span>
-                </div>
-                
-                <% if (user && user.role === 'admin') { %>
-                    <hr>
-                    <div class="d-grid gap-2">
-                        <a href="/admin/edit-teacher/<%= teacher._id %>" class="btn btn-outline-warning">Upravit učitele</a>
-                        <form action="/admin/delete-teacher/<%= teacher._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Opravdu chcete tohoto učitele smazat?');">
-                            <button type="submit" class="btn btn-outline-oakm w-100">Smazat učitele</button>
-                        </form>
+        <div class="card p-3 text-center border-0 shadow-sm" style="background: rgba(25, 25, 25, 0.5); backdrop-filter: blur(10px); border-radius: 20px;">
+            
+            <div class="mx-auto mb-4" style="width: 100%; border-radius: 15px; overflow: hidden; border: 1px solid rgba(230,0,35,0.3); box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                <% if (teacher.image) { %>
+                    <img src="/uploads/<%= teacher.image %>" alt="<%= teacher.name %>" style="width: 100%; display: block; object-fit: cover; max-height: 450px;">
+                <% } else { %>
+                    <div class="w-100 d-flex align-items-center justify-content-center" style="height: 350px; background: linear-gradient(135deg, #2a2a2a, #1a1a1a);">
+                        <span class="fw-bold text-white" style="font-size: 5rem;"><%= teacher.name.charAt(0) %></span>
                     </div>
                 <% } %>
             </div>
+            
+            <h2 class="fw-bold text-white mb-1"><%= teacher.name %></h2>
+            <p class="text-white-50 mb-4" style="font-size: 0.95rem;"><%= teacher.subjects.join(', ') %></p>
+            
+            <div class="mb-4">
+                <span class="text-white-50 d-block mb-2" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Průměrné hodnocení</span>
+                <span class="badge badge-oakm fs-4 rounded-pill px-4 py-2 shadow-sm"><%= averageRating > 0 ? averageRating : 'Zatím nehodnoceno' %> / 5</span>
+            </div>
+            
+            <% if (user && user.role === 'admin') { %>
+                <hr style="border-color: rgba(255,255,255,0.1); margin: 1.5rem 0;">
+                <div class="d-grid gap-3">
+                    <a href="/admin/edit-teacher/<%= teacher._id %>" class="btn btn-outline-light rounded-pill fw-bold">Upravit učitele</a>
+                    <button type="button" class="btn btn-outline-oakm w-100 rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#deleteTeacherModal">
+                        Smazat učitele
+                    </button>
+                </div>
+            <% } %>
         </div>
     </div>
 
     <div class="col-md-8">
-        <div class="card shadow-sm mb-4">
+        <div class="card mb-5 p-2 border-0 shadow-sm" style="background: rgba(25, 25, 25, 0.5); backdrop-filter: blur(10px); border-radius: 20px;">
             <div class="card-body">
-                <h4 class="mb-3">Přidat hodnocení</h4>
+                <h4 class="mb-4 fw-bold text-white">Přidat hodnocení</h4>
                 <% if (user) { %>
                     <form action="/teachers/<%= teacher._id %>/reviews" method="POST">
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Počet hvězdiček (1 - nejhorší, 5 - nejlepší)</label>
-                            <select class="form-select" id="rating" name="rating" required>
-                                <option value="5">5 - Výborný</option>
-                                <option value="4">4 - Chvalitebný</option>
-                                <option value="3">3 - Dobrý</option>
-                                <option value="2">2 - Dostatečný</option>
-                                <option value="1">1 - Nedostatečný</option>
+                        <div class="mb-4">
+                            <label for="rating" class="form-label text-white-50">Jaký je to učitel?</label>
+                            
+                            <select class="form-select shadow-none" id="rating" name="rating" style="background-color: rgba(25,25,25,0.7); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px; font-weight: bold;" required>
+                                <option value="5" style="background-color: #1a1a1a;">5 - Největší sigma</option>
+                                <option value="4" style="background-color: #1a1a1a;">4 - W učitel</option>
+                                <option value="3" style="background-color: #1a1a1a;">3 - Mid</option>
+                                <option value="2" style="background-color: #1a1a1a;">2 - Dá se přežít</option>
+                                <option value="1" style="background-color: #1a1a1a;">1 - Bez komentáře</option>
                             </select>
+                            
                         </div>
-                        <div class="mb-3">
-                            <label for="comment" class="form-label">Slovní hodnocení (nepovinné)</label>
-                            <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="Napište, jaký byl učitel..."></textarea>
+                        <div class="mb-4">
+                            <label for="comment" class="form-label text-white-50">Slovní hodnocení (nepovinné)</label>
+                            <textarea class="form-control shadow-none" id="comment" name="comment" rows="3" style="background-color: rgba(25,25,25,0.7); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px;" placeholder="Dropni sem svůj názor..."></textarea>
                         </div>
-                        <button type="submit" class="btn btn-oakm">Odeslat hodnocení</button>
+                        <button type="submit" class="btn btn-oakm rounded-pill px-5 py-2 fw-bold">Odeslat hodnocení</button>
                     </form>
                 <% } else { %>
-                    <div class="alert alert-warning">
-                        Pro přidání hodnocení se musíte <a href="/login" class="alert-link">přihlásit</a>.
+                    <div class="alert shadow-sm rounded-4" style="background-color: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ffffff;">
+                        Pro přidání hodnocení se musíte <a href="/login" class="text-danger fw-bold text-decoration-none">přihlásit</a>.
                     </div>
                 <% } %>
             </div>
         </div>
 
-        <h4 class="mb-3">Recenze studentů</h4>
+        <h4 class="mb-4 fw-bold text-white">Recenze studentů</h4>
         <% if (reviews.length > 0) { %>
-            <div class="list-group shadow-sm">
+            <div class="d-flex flex-column gap-3">
                 <% reviews.forEach(review => { %>
-                    <div class="list-group-item flex-column align-items-start p-3">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h6 class="mb-1 fw-bold"><%= review.user.username %></h6>
-                            <small class="text-muted"><%= review.createdAt.toLocaleDateString('cs-CZ') %></small>
+                    <div class="card p-4 border-0" style="background: rgba(25, 25, 25, 0.5); backdrop-filter: blur(10px); border-radius: 20px;">
+                        <div class="d-flex w-100 justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0 fw-bold text-white d-flex align-items-center gap-3">
+                                <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; font-size: 0.9rem; background: linear-gradient(135deg, #e60023, #ff1a3c);">
+                                    <%= review.user.username.charAt(0).toUpperCase() %>
+                                </div>
+                                <%= review.user.username %>
+                            </h6>
+                            <small class="text-white-50" style="font-size: 0.8rem;"><%= review.createdAt.toLocaleDateString('cs-CZ') %></small>
                         </div>
-                        <p class="mb-1 mt-2">
-                            Hodnocení: <span class="badge badge-oakm"><%= review.rating %> / 5</span>
-                        </p>
+                        <div class="mb-3">
+                            <span class="badge badge-oakm rounded-pill px-3 py-2"><%= review.rating %> / 5</span>
+                        </div>
                         <% if (review.comment) { %>
-                            <p class="mt-2 mb-0 text-dark"><%= review.comment %></p>
+                            <p class="mb-0 text-white" style="font-size: 0.95rem; line-height: 1.6; opacity: 0.9;"><%= review.comment %></p>
                         <% } %>
                     </div>
                 <% }) %>
             </div>
         <% } else { %>
-            <p class="text-muted">Tento učitel zatím nemá žádné recenze.</p>
+            <div class="alert shadow-sm rounded-4" style="background-color: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.5);">
+                Tento učitel zatím nemá žádné recenze. Buďte první!
+            </div>
         <% } %>
     </div>
 </div>
+
+<% if (user && user.role === 'admin') { %>
+<div class="modal fade" id="deleteTeacherModal" tabindex="-1" aria-labelledby="deleteTeacherModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(20px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);">
+            
+            <div class="modal-header border-0 pb-0 pt-4 px-4">
+                <h5 class="modal-title fw-bold text-white d-flex align-items-center gap-2" id="deleteTeacherModalLabel">
+                    <span style="color: #e60023;">⚠️</span> Opravdu smazat?
+                </h5>
+                <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Zavřít"></button>
+            </div>
+            
+            <div class="modal-body text-white-50 px-4 py-4" style="font-size: 1.05rem;">
+                Tuto akci už <strong class="text-white">nelze vzít zpět</strong>. Chystáte se trvale smazat učitele 
+                <strong class="text-white" style="border-bottom: 2px solid #e60023;"><%= teacher.name %></strong> 
+                včetně všech jeho recenzí. Jste si jisti?
+            </div>
+            
+            <div class="modal-footer border-0 pt-0 pb-4 px-4 d-flex flex-nowrap gap-2">
+                <button type="button" class="btn btn-outline-light rounded-pill w-50 fw-bold" data-bs-dismiss="modal">Zrušit</button>
+                <form action="/admin/delete-teacher/<%= teacher._id %>?_method=DELETE" method="POST" class="w-50 m-0">
+                    <button type="submit" class="btn btn-oakm rounded-pill w-100 fw-bold">Ano, smazat</button>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<% } %>
 
 <%- include('../partials/footer') %>
