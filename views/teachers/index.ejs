@@ -1,8 +1,50 @@
 <%- include('../partials/header') %>
 
+<style>
+    .rank-badge {
+        position: absolute;
+        top: -15px;
+        left: -15px;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border-radius: 50%;
+        z-index: 10;
+        font-size: 1.2rem;
+        border: 2px solid #1a1a1a;
+        background: linear-gradient(135deg, #e60023, #ff1a3c);
+        color: white;
+        box-shadow: 0 5px 15px rgba(230,0,35,0.4);
+    }
+    .rank-gold {
+        background: linear-gradient(135deg, #FFD700, #FDB931);
+        color: #000 !important;
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    }
+    .rank-silver {
+        background: linear-gradient(135deg, #E0E0E0, #9E9E9E);
+        color: #000 !important;
+        box-shadow: 0 5px 15px rgba(224, 224, 224, 0.4);
+    }
+    .rank-bronze {
+        background: linear-gradient(135deg, #CD7F32, #8B4513);
+        box-shadow: 0 5px 15px rgba(205, 127, 50, 0.4);
+    }
+    /* Upravený styl pro nehodnocené učitele - odstraněno obtažení */
+    .rank-unrated {
+        background: #ffffff;
+        color: #1a1a1a !important;
+        border: none !important;
+        box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+    }
+</style>
+
 <div class="row mb-5 align-items-center">
     <div class="col-md-6">
-        <h2 class="fw-bold text-white mb-3 mb-md-0" style="letter-spacing: 1px;">Seznam učitelů</h2>
+        <h2 class="fw-bold text-white mb-3 mb-md-0" style="letter-spacing: 1px;">Žebříček učitelů</h2>
     </div>
     <div class="col-md-6">
         <form action="/" method="GET" class="d-flex">
@@ -12,36 +54,57 @@
     </div>
 </div>
 
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-4">
     <% if (teachers.length > 0) { %>
-        <% teachers.forEach(teacher => { %>
+        <% teachers.forEach((teacher, index) => { %>
             <div class="col">
-                <div class="card h-100 shadow-sm p-3 text-center border-0">
+                <div class="position-relative h-100 w-100">
                     
-                    <div class="mx-auto mt-2 mb-3 d-flex align-items-center justify-content-center" style="width: 110px; height: 110px; border-radius: 50%; overflow: hidden; border: 3px solid #e60023; box-shadow: 0 0 20px rgba(230,0,35,0.2);">
-                        <% if (teacher.image) { %>
-                            <img src="/uploads/<%= teacher.image %>" alt="<%= teacher.name %>" style="width: 100%; height: 100%; object-fit: cover;">
-                        <% } else { %>
-                            <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #2a2a2a, #1a1a1a);">
-                                <span class="fw-bold text-white" style="font-size: 2.5rem;"><%= teacher.name.charAt(0) %></span>
-                            </div>
-                        <% } %>
-                    </div>
+                    <% if (teacher.averageRating === 0) { %>
+                        <div class="rank-badge rank-unrated shadow-sm">-</div>
+                    <% } else if (index === 0) { %>
+                        <div class="rank-badge rank-gold shadow-lg">#1</div>
+                    <% } else if (index === 1) { %>
+                        <div class="rank-badge rank-silver shadow-lg">#2</div>
+                    <% } else if (index === 2) { %>
+                        <div class="rank-badge rank-bronze shadow-lg">#3</div>
+                    <% } else { %>
+                        <div class="rank-badge shadow-lg">#<%= index + 1 %></div>
+                    <% } %>
                     
-                    <div class="card-body p-0 d-flex flex-column">
-                        <h5 class="card-title fw-bold text-white mb-1"><%= teacher.name %></h5>
-                        <p class="card-text mb-4" style="color: #a0a0a0; font-size: 0.85rem;">
-                            <%= teacher.subjects.join(', ') %>
-                        </p>
+                    <div class="card h-100 shadow-sm p-3 text-center border-0">
                         
-                        <a href="/teachers/<%= teacher._id %>" class="btn btn-oakm w-100 rounded-pill mt-auto fw-bold" style="font-size: 0.9rem; padding: 10px 0;">Zobrazit profil</a>
+                        <div class="mx-auto mt-2 mb-3 d-flex align-items-center justify-content-center" style="width: 110px; height: 110px; border-radius: 50%; overflow: hidden; border: 3px solid #e60023; box-shadow: 0 0 20px rgba(230,0,35,0.2);">
+                            <% if (teacher.image) { %>
+                                <img src="/uploads/<%= teacher.image %>" alt="<%= teacher.name %>" style="width: 100%; height: 100%; object-fit: cover;">
+                            <% } else { %>
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #2a2a2a, #1a1a1a);">
+                                    <span class="fw-bold text-white" style="font-size: 2.5rem;"><%= teacher.name.charAt(0) %></span>
+                                </div>
+                            <% } %>
+                        </div>
+                        
+                        <div class="card-body p-0 d-flex flex-column">
+                            <h5 class="card-title fw-bold text-white mb-1"><%= teacher.name %></h5>
+                            <p class="card-text mb-3" style="color: #a0a0a0; font-size: 0.85rem;">
+                                <%= teacher.subjects.join(', ') %>
+                            </p>
+                            
+                            <div class="mb-4">
+                                <span class="badge rounded-pill px-3 py-2 shadow-sm" style="font-size: 0.95rem; background: rgba(25,25,25,0.8); color: #ffffff; border: 1px solid rgba(255,255,255,0.1);">
+                                    <span style="color: #FFD700; margin-right: 3px;">★</span> <%= teacher.displayRating %>
+                                </span>
+                            </div>
+                            
+                            <a href="/teachers/<%= teacher._id %>" class="btn btn-oakm w-100 rounded-pill mt-auto fw-bold" style="font-size: 0.9rem; padding: 10px 0;">Zobrazit profil</a>
+                        </div>
                     </div>
-                </div>
+                </div> 
             </div>
         <% }) %>
     <% } else { %>
         <div class="col-12">
-            <div class="alert shadow-sm" style="background-color: #1a1a1a; border: 1px solid #333; border-left: 4px solid #e60023; color: #ffffff;">
+            <div class="alert shadow-sm rounded-4" style="background-color: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-left: 4px solid #e60023; color: #ffffff;">
                 Zatím nebyli přidáni žádní učitelé, nebo hledaný výraz neodpovídá žádnému výsledku.
             </div>
         </div>
