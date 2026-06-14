@@ -4,15 +4,8 @@ const multer = require('multer');
 const teacherController = require('../controllers/teacherController');
 const { requireAdmin } = require('../middlewares/adminMiddleware');
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/uploads/');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
-const upload = multer({ storage });
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 router.get('/', teacherController.getTeachers);
 router.get('/teachers/:id', teacherController.getTeacherDetail);

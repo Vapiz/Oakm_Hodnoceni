@@ -9,10 +9,8 @@ const getTeachers = async (req, res) => {
             query = { $or: [{ name: searchRegex }, { subjects: searchRegex }] };
         }
         
-        // Používáme .lean(), abychom do objektů mohli volně přidávat vlastní proměnné (jako displayRating)
         let teachers = await Teacher.find(query).lean();
 
-        // Projdeme všechny učitele, spočítáme průměr a připravíme text pro zobrazení
         for (let teacher of teachers) {
             const reviews = await Review.find({ teacher: teacher._id });
             
@@ -21,12 +19,15 @@ const getTeachers = async (req, res) => {
                 teacher.averageRating = parseFloat((sum / reviews.length).toFixed(1));
                 teacher.displayRating = `${teacher.averageRating} / 5`;
             } else {
-                teacher.averageRating = 0; // Skryté číslo 0 pro logiku řazení dolů
-                teacher.displayRating = 'Zatím nehodnoceno'; // Text, co uvidí uživatel
+                teacher.averageRating = 0;
+                teacher.displayRating = 'Zatím nehodnoceno';
+            }
+
+            if (teacher.image && teacher.image.data) {
+                teacher.imageBase64 = `data:${teacher.image.contentType};base64,${teacher.image.data.toString('base64')}`;
             }
         }
 
-        // Seřadíme pole učitelů podle averageRating od největšího (5) po nejmenší (0)
         teachers.sort((a, b) => b.averageRating - a.averageRating);
 
         res.render('teachers/index', { teachers, user: req.session.user });
@@ -49,7 +50,12 @@ const getTeacherDetail = async (req, res) => {
             averageRating = (sum / reviews.length).toFixed(1);
         }
 
-        res.render('teachers/detail', { teacher, reviews, averageRating, user: req.session.user });
+        let imageBase64 = null;
+        if (teacher.image && teacher.image.data) {
+            imageBase64 = `data:${teacher.image.contentType};base64,${teacher.image.data.toString('base64')}`;
+        }
+
+        res.render('teachers/detail', { teacher, reviews, averageRating, user: req.session.user, imageBase64 });
     } catch (error) {
         console.error(error);
         res.status(500).send('Chyba při načítání detailu');
@@ -64,9 +70,17 @@ const handleAddTeacher = async (req, res) => {
     try {
         const { name, subjects } = req.body;
         const subjectsArray = subjects.split(',').map(s => s.trim());
-        const image = req.file ? req.file.filename : '';
+        
+        let newTeacherData = { name, subjects: subjectsArray };
+        
+        if (req.file) {
+            newTeacherData.image = {
+                data: req.file.buffer,
+                contentType: req.file.mimetype
+            };
+        }
 
-        const teacher = new Teacher({ name, subjects: subjectsArray, image });
+        const teacher = new Teacher(newTeacherData);
         await teacher.save();
         res.redirect('/');
     } catch (error) {
@@ -78,7 +92,13 @@ const handleAddTeacher = async (req, res) => {
 const renderEditTeacher = async (req, res) => {
     try {
         const teacher = await Teacher.findById(req.params.id);
-        res.render('admin/editTeacher', { teacher, user: req.session.user });
+        
+        let imageBase64 = null;
+        if (teacher.image && teacher.image.data) {
+            imageBase64 = `data:${teacher.image.contentType};base64,${teacher.image.data.toString('base64')}`;
+        }
+
+        res.render('admin/editTeacher', { teacher, user: req.session.user, imageBase64 });
     } catch (error) {
         res.status(500).send('Chyba při načítání úpravy');
     }
@@ -90,8 +110,12 @@ const handleEditTeacher = async (req, res) => {
         const subjectsArray = subjects.split(',').map(s => s.trim());
         
         let updateData = { name, subjects: subjectsArray };
+        
         if (req.file) {
-            updateData.image = req.file.filename;
+            updateData.image = {
+                data: req.file.buffer,
+                contentType: req.file.mimetype
+            };
         }
 
         await Teacher.findByIdAndUpdate(req.params.id, updateData);
